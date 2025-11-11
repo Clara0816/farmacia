@@ -3,12 +3,12 @@ import type { MedicamentoDTO } from "../interface/MedicamentoDTO.js";
 import type { Request, Response } from "express";
 
 
-class MedicamentoController extends Medicamento {   
-    
+class MedicamentoController extends Medicamento {
+
     static async todos(req: Request, res: Response): Promise<Response> {
         try {
             // Chama o método listarCarros da classe Carro para buscar todos os carros no banco de dados
-            const listaMedicamento: Array<Medicamento> | null = await Medicamento.listarMedicamentos();
+            const listaMedicamento: Array<Medicamento> | null = await Medicamento.listarMedicamento();
 
             // Retorna uma resposta HTTP com status 200 (OK) e envia a lista de carros em formato JSON
             return res.status(200).json(listaMedicamento);
@@ -54,10 +54,51 @@ class MedicamentoController extends Medicamento {
             return res.status(500).json({ mensagem: "Não foi possível inserir o medicamento." });
         }
     }
+    static async medicamentoNome(req: Request, res: Response): Promise<Response> {
+        try {
+            const nome: string = (req.params.nome as string);
+           if(nome == null) {
+            return res.status(400).json({ mensagem: "Nome não informado." });
+            }
+            const respostaModelo = await Medicamento.listarMedicamentoNome(nome);
+            if (respostaModelo == null) {
+                return res.status(200).json({ mensagem: "Nenhum medicamento encontrado com o nome fornecido." });
+            }
+            return res.status(200).json(respostaModelo);
+        } catch (error) {
 
-}    
+            console.error(`Erro ao acesso o modelo. ${error}`);
+
+            return res.status(500).json({ mensagem: "Não foi possível recuperar o medicamento." });
+        }
+    }
+
+        static async medicamentoPrincipio(req: Request, res: Response): Promise<Response> {
+        try {
+            const principioAtivo: string = (req.params.principioAtivo as string);
+           if(principioAtivo == null) {
+            return res.status(400).json({ mensagem: "Princípio ativo não informado." });
+            }
+            const respostaModelo = await Medicamento.listarMedicamentoPrincipio(principioAtivo);
+            if (respostaModelo == null) {
+                return res.status(200).json({ mensagem: "Nenhum medicamento encontrado com o princípio ativo fornecido." });
+            }
+            return res.status(200).json(respostaModelo);
+        } catch (error) {
+
+            console.error(`Erro ao acesso o modelo. ${error}`);
+
+            return res.status(500).json({ mensagem: "Não foi possível recuperar o medicamento." });
+        }
+    }
+}
 
 export default MedicamentoController;
+
+   
+
+
+
 
 
 
